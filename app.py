@@ -42,11 +42,12 @@ class ImageAnalyzer:
     def analyze_image(self, image_path: str) -> str:
         image_base64 = self.encode_image(image_path)
         try:
+            start_time = time.time()
             response = self.client.chat.completions.create(
                 model="erax-ai/EraX-VL-7B-V1.5",
                 messages=[
                     {
-                        "role": "user",
+                        "role": "user", 
                         "content": [
                             {"type": "text", "text": prompt},
                             {
@@ -57,6 +58,17 @@ class ImageAnalyzer:
                     }
                 ]
             )
+            end_time = time.time()
+            
+            # Log response metadata
+            logger.info(f"Response metadata:")
+            logger.info(f"Model: {response.model}")
+            logger.info(f"Created: {response.created}")
+            logger.info(f"Response time: {end_time - start_time:.2f} seconds")
+            logger.info(f"Total tokens: {response.usage.total_tokens}")
+            logger.info(f"Prompt tokens: {response.usage.prompt_tokens}")
+            logger.info(f"Completion tokens: {response.usage.completion_tokens}")
+            
             return response.choices[0].message.content
         except Exception as e:
             logger.error(f"Error analyzing image: {e}")
