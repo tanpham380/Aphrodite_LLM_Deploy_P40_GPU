@@ -3,7 +3,7 @@
 ## Overview
 This project provides customized configurations and Docker setup for running modern Large Language Models (LLMs) on legacy NVIDIA Pascal GPUs like the Tesla P40. It uses a modified version of the Aphrodite Engine with CUDA 12.1 compatibility.
 
-**Ngôn ngữ**: [English](#) | [Tiếng Việt](#tiếng-việt)
+**Ngôn ngữ**: [English](#overview) | [Tiếng Việt](#aphrodite-trien-khai-mo-hinh-llm-cho-gpu-pascal)
 
 ## Features
 - **Optimized for NVIDIA Pascal architecture GPUs**
@@ -117,6 +117,28 @@ docker build -t my-aphrodite-openai:cuda12.1 .
 
 ### Chạy mô hình
 ```bash
+docker run --runtime nvidia --gpus all \
+    -v ~/.cache/huggingface:/root/.cache/huggingface \
+    --env "CUDA_VISIBLE_DEVICES=0" \
+    -p 2242:2242 \
+    --ipc=host \
+    my-aphrodite-openai:cuda12.1 \
+    --model erax-ai/EraX-VL-7B-V1.5 \
+    --enforce-eager \
+    --dtype half \
+    --gpu-memory-utilization 0.85
+```
+
+### Ví dụ: create_aphrodite2.sh
+Dưới đây là một script minh họa để tự động quá trình tạo:
+
+```bash
+#!/bin/bash
+
+# Xây dựng Docker image
+docker build -t my-aphrodite-openai:cuda12.1 .
+
+# Chạy Docker container
 docker run --runtime nvidia --gpus all \
     -v ~/.cache/huggingface:/root/.cache/huggingface \
     --env "CUDA_VISIBLE_DEVICES=0" \
