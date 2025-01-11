@@ -10,11 +10,10 @@ docker run --runtime nvidia --gpus all \
     --dtype half \
     --rope-scaling "{\"type\":\"linear\",\"factor\":1.0,\"mrope_section\":[16,24,24],\"rope_type\":\"default\"}" \
     --gpu-memory-utilization 0.8 \
-    --enforce-eager \
-    --enable-chunked-prefill \
     --tensor-parallel-size 2 \
     --disable-frontend-multiprocessing
-
+    # --enforce-eager \
+    # --enable-chunked-prefill \
 # #!/bin/bash
 # docker run --runtime nvidia --gpus all -d \
 #     -v ~/.cache/huggingface:/root/.cache/huggingface \
