@@ -116,6 +116,7 @@ class AphroditeConfigurator:
         script = """#!/bin/bash
 docker run --runtime nvidia --gpus all -d \
     -v ~/.cache/huggingface:/root/.cache/huggingface \
+    -v ./chat-template:/workspace/templates \
     --env "CUDA_VISIBLE_DEVICES={gpu_index}" \
     --env "APHRODITE_IMAGE_FETCH_TIMEOUT=60" \
     -p {port}:{port} \

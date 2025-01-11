@@ -1,21 +1,17 @@
 #!/bin/bash
-docker run --runtime nvidia --gpus all -d \
+docker run --runtime nvidia --gpus all \
     -v ~/.cache/huggingface:/root/.cache/huggingface \
-    -v ./chat-template:/workspace/templates \
     --env "CUDA_VISIBLE_DEVICES=0" \
     --env "APHRODITE_IMAGE_FETCH_TIMEOUT=60" \
     -p 2242:2242 \
     --ipc=host \
     my-aphrodite-openai:cuda12.1 \
     --model erax-ai/EraX-VL-7B-V1.5 \
-    --enforce-eager \
     --dtype half \
-    --enable-chunked-prefill \
-    --kv-cache-dtype fp8 \
     --rope-scaling "{\"type\":\"linear\",\"factor\":1.0,\"mrope_section\":[16,24,24],\"rope_type\":\"default\"}" \
     --gpu-memory-utilization 0.95 \
-    --max-num-batched-tokens 4096 \
-    --block-size 8
+    --enable-chunked-prefill
+
 # #!/bin/bash
 # docker run --runtime nvidia --gpus all -d \
 #     -v ~/.cache/huggingface:/root/.cache/huggingface \

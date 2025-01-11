@@ -11,10 +11,10 @@ RUN pip install --no-cache-dir \
     einops \
     ray
 
-# Copy package structure
+RUN echo ${NV_CUDA_CUDART_VERSION}
 COPY ./aphrodite-engine/aphrodite /usr/local/lib/python3.10/dist-packages/aphrodite
 
-# Set permissions
+
 RUN chmod -R 755 /usr/local/lib/python3.10/dist-packages/aphrodite
 
 ENTRYPOINT ["python3", "-m", "aphrodite.endpoints.openai.api_server"]
