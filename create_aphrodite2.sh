@@ -1,7 +1,9 @@
 #!/bin/bash
 docker run --runtime nvidia --gpus all -d \
     -v ~/.cache/huggingface:/root/.cache/huggingface \
+    -v ./chat-template:/workspace/templates \
     --env "CUDA_VISIBLE_DEVICES=0" \
+    --env "APHRODITE_IMAGE_FETCH_TIMEOUT=60" \
     -p 2242:2242 \
     --ipc=host \
     my-aphrodite-openai:cuda12.1 \

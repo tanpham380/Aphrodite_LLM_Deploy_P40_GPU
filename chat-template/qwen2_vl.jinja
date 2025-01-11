@@ -1,0 +1,12 @@
+{% for message in messages %}
+{% if message['content'] is string %}
+{{ message['role'] }}: {{ message['content'] }}
+{% else %}
+{{ message['role'] }}: {% for content in message['content'] %}
+  {% if content['type'] == 'image_url' %}<image>
+  {% elif 'text' in content %}{{ content['text'] }}
+  {% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% if add_generation_prompt %}Assistant: {% endif %}

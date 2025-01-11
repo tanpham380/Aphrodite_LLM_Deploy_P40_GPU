@@ -117,6 +117,7 @@ class AphroditeConfigurator:
 docker run --runtime nvidia --gpus all -d \
     -v ~/.cache/huggingface:/root/.cache/huggingface \
     --env "CUDA_VISIBLE_DEVICES={gpu_index}" \
+    --env "APHRODITE_IMAGE_FETCH_TIMEOUT=60" \
     -p {port}:{port} \
     --ipc=host \
     my-aphrodite-openai:cuda12.1 \
