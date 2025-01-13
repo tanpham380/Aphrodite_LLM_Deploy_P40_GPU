@@ -1,7 +1,7 @@
 # Aphrodite LLM Deployment for Pascal GPUs
+# Tesla P40 deploy LLM
 
 ## Overview
-Tesla P40 deploy LLM
 This project provides customized configurations and Docker setup for running modern Large Language Models (LLMs) on legacy NVIDIA Pascal GPUs like the Tesla P40. It uses a modified version of the Aphrodite Engine with CUDA 12.1 compatibility.
 
 **Ngôn ngữ**: [English](#overview) | [Tiếng Việt](#aphrodite-trien-khai-mo-hinh-llm-cho-gpu-pascal)
