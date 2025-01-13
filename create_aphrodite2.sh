@@ -70,3 +70,43 @@ docker run --runtime nvidia --gpus all -d \
 #     --enforce-eager \
 #     --rope-scaling "{\"type\":\"linear\",\"factor\":1.0,\"mrope_section\":[16,24,24],\"rope_type\":\"default\"}" \
 #     --gpu-memory-utilization 0.95
+
+
+
+# docker run --runtime nvidia --gpus all \
+#     -v ~/.cache/huggingface:/root/.cache/huggingface \
+#     --env "CUDA_VISIBLE_DEVICES=0,1,2" \
+#     -p 2243:2242 \
+#     --ipc=host \
+#     my-aphrodite-openai:cuda12.1 \
+#     --model erax-ai/EraX-VL-2B-V1.5 \
+#     --tensor-parallel-size 1 \
+#     --api-keys "sk-empty" \
+#     --enforce-eager
+
+
+
+# docker run --runtime nvidia --gpus all -d \
+#     -v ~/.cache/huggingface:/root/.cache/huggingface \
+#     --env "CUDA_VISIBLE_DEVICES=1,2" \
+#     -p 2242:2242 \
+#     --ipc=host \
+#     my-aphrodite-openai:cuda12.1 \
+#     --model erax-ai/EraX-VL-7B-V1.5 \
+#     --tensor-parallel-size 1 \
+#     --enforce-eager \
+#     --rope-scaling "{\"type\":\"dynamic\",\"factor\":1.0}"
+
+
+# # Build and run commands
+# docker build -t my-aphrodite-openai:cuda12.1 .
+
+# docker run --runtime nvidia --gpus all \
+#     -v ~/.cache/huggingface:/root/.cache/huggingface \
+#     --env "CUDA_VISIBLE_DEVICES=0,1,2" \
+#     -p 2242:2242 \
+#     --ipc=host \
+#     my-aphrodite-openai:cuda12.1 \
+#     --model erax-ai/EraX-VL-2B-V1.5 \
+#     --tensor-parallel-size 1 \
+#     --api-keys "sk-empty"
