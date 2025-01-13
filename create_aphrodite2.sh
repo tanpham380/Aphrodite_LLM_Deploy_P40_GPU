@@ -1,7 +1,7 @@
 #!/bin/bash
-docker run --runtime nvidia --gpus all \
+docker run --runtime nvidia --gpus all -d \
     -v ~/.cache/huggingface:/root/.cache/huggingface \
-    --env "CUDA_VISIBLE_DEVICES=0,1,2,3" \
+    --env "CUDA_VISIBLE_DEVICES=2,3" \
     --env "APHRODITE_IMAGE_FETCH_TIMEOUT=60" \
     -p 2242:2242 \
     --ipc=host \
@@ -9,8 +9,8 @@ docker run --runtime nvidia --gpus all \
     --model erax-ai/EraX-VL-7B-V1.5 \
     --dtype half \
     --rope-scaling "{\"type\":\"linear\",\"factor\":1.0,\"mrope_section\":[16,24,24],\"rope_type\":\"default\"}" \
-    --gpu-memory-utilization 0.5 \
-    --tensor-parallel-size 4 \
+    --gpu-memory-utilization 0.8 \
+    --tensor-parallel-size 2 \
     --disable-frontend-multiprocessing
     # --enforce-eager \
     # --enable-chunked-prefill \

@@ -30,6 +30,17 @@ Trả lại kết quả OCR của tất cả thông tin trong 1 JSON duy nhất 
 }
 """
 
+# Configuration for generation
+GENERATION_CONFIG_7B = {
+    "temperature": 0.01,
+    "top_p": 0.1,
+    "min_p": 0.1,
+    "top_k": 1,
+    "max_tokens": 1024,
+    "repetition_penalty": 1.1,
+    "best_of": 5
+}
+
 class ImageAnalyzer:
     def __init__(self, api_key: str, api_base: str):
         self.api_key = api_key
@@ -69,42 +80,63 @@ class ImageAnalyzer:
                             }
                         ]
                     }
-                ]
+                ],
+                extra_body={
+                    "temperature": 0.01,
+                    "top_p": 0.1,
+                    "min_p": 0.1,
+                    "top_k": 1,
+                    "max_tokens": 1024,
+                    "repetition_penalty": 1.1,
+                    "best_of": 5,
+                    "use_beam_search": False,
+                    "tfs": 1.0,
+                    "eta_cutoff": 0.0,
+                    "epsilon_cutoff": 0.0,
+                    "typical_p": 1.0,
+                    "smoothing_factor": 0.0,
+                    "smoothing_curve": 1.0,
+                }
             )
             end_time = time.time()
-
-            # Log response metadata
-            logger.info("Response metadata:")
-            logger.info(f"Model: {response.model}")
-            logger.info(f"Created: {response.created}")
-            logger.info(f"Response time: {end_time - start_time:.2f} seconds")
-            logger.info(f"Total tokens: {response.usage.total_tokens}")
-            logger.info(f"Prompt tokens: {response.usage.prompt_tokens}")
-            logger.info(f"Completion tokens: {response.usage.completion_tokens}")
-
-            return response.choices[0].message.content
+            # Create response dictionary with content and metadata
+            response_data = {
+                "content": response.choices[0].message.content,
+                "metadata": {
+                    "model": response.model,
+                    "created": response.created,
+                    "response_time": f"{end_time - start_time:.2f}",
+                    "tokens": {
+                        "total": response.usage.total_tokens,
+                        "prompt": response.usage.prompt_tokens,
+                        "completion": response.usage.completion_tokens
+                    }
+                }
+            }
+            return jsonify(response_data)
         except Exception as e:
             logger.error(f"Error analyzing image: {e}")
             raise
+
 def analyze_image_gradio(image) -> str:
     """
     Wrapper for Gradio demo that handles image analysis.
-    
+
     Args:
         image: Image input from Gradio interface (can be filepath or numpy array)
-        
+
     Returns:
         str: JSON response with extracted information or error message
     """
     analyzer = ImageAnalyzer(api_key="sk-empty", api_base="http://localhost:2242/v1")
-    
+
     try:
         # Create temp directory if it doesn't exist
         temp_dir = Path("temp")
         temp_dir.mkdir(exist_ok=True)
-        
+
         temp_image_path = temp_dir / "temp_uploaded_image.jpg"
-        
+
         # Handle different image input types
         if isinstance(image, str):
             # If image is already a filepath
