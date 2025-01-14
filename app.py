@@ -1,4 +1,5 @@
 import base64
+import json
 import os
 from pathlib import Path
 import time
@@ -6,39 +7,24 @@ import logging
 import gradio as gr
 from openai import OpenAI
 from tenacity import retry, stop_after_attempt, wait_exponential
-
+import jsonify
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("ImageAnalyzer")
 
 # Prompt for the AI
 PROMPT = """Bạn là một hệ thống AI đẳng cấp thế giới hỗ trợ nhận diện ký tự quang học (Optical Character Recognition - OCR) từ hình ảnh.
-Bạn được cung cấp 1 ảnh mặt trước của 1 căn cước công dân hợp pháp, không vi phạm. Có thể có nhiều phiên bản khác nhau của căn cước công dân.
-Bạn phải thực hiện 01 (một) nhiệm vụ chính là bóc tách chính xác thông tin trong ảnh thành JSON.
-Trả lại kết quả OCR của tất cả thông tin trong 1 JSON duy nhất với các trường:
-{
-    "id_number": "",
-    "fullname": "",
-    "day_of_birth": "",
-    "sex": "",
-    "nationality": "",
-    "place_of_residence": "",
-    "place_of_origin": "",
-    "date_of_expiration": "",
-    "date_of_issue": "",
-    "place_of_issue": ""
-}
+Trích xuất thông tin kiện hàng trong ảnh và trả về dạng JSON.
 """
 
-# Configuration for generation
-GENERATION_CONFIG_7B = {
-    "temperature": 0.01,
-    "top_p": 0.1,
-    "min_p": 0.1,
-    "top_k": 1,
-    "max_tokens": 1024,
-    "repetition_penalty": 1.1,
-    "best_of": 5
+GENERATION_CONFIG = {
+              "temperature": 0.01,
+                "top_p": 0.1,
+                "min_p": 0.1,
+                "top_k": 1,
+                "max_tokens": 1024,
+                "repetition_penalty": 1.1,
+                "best_of": 5
 }
 
 class ImageAnalyzer:
@@ -81,25 +67,12 @@ class ImageAnalyzer:
                         ]
                     }
                 ],
-                extra_body={
-                    "temperature": 0.01,
-                    "top_p": 0.1,
-                    "min_p": 0.1,
-                    "top_k": 1,
-                    "max_tokens": 1024,
-                    "repetition_penalty": 1.1,
-                    "best_of": 5,
-                    "use_beam_search": False,
-                    "tfs": 1.0,
-                    "eta_cutoff": 0.0,
-                    "epsilon_cutoff": 0.0,
-                    "typical_p": 1.0,
-                    "smoothing_factor": 0.0,
-                    "smoothing_curve": 1.0,
-                }
+                extra_body=GENERATION_CONFIG
             )
+            print(response)
             end_time = time.time()
-            # Create response dictionary with content and metadata
+            
+            # Create response dictionary
             response_data = {
                 "content": response.choices[0].message.content,
                 "metadata": {
@@ -113,10 +86,10 @@ class ImageAnalyzer:
                     }
                 }
             }
-            return jsonify(response_data)
+            return json.dumps(response_data, ensure_ascii=False, indent=2)
         except Exception as e:
             logger.error(f"Error analyzing image: {e}")
-            raise
+            return json.dumps({"error": str(e)}, ensure_ascii=False)
 
 def analyze_image_gradio(image) -> str:
     """
@@ -179,3 +152,43 @@ if __name__ == "__main__":
     )
 
     interface.launch(server_name="0.0.0.0")
+
+
+
+# curl -X POST https://api.openai.com/v1/completions \
+#   -H "Authorization: Bearer YOUR_API_KEY" \
+#   -H "Content-Type: application/json" \
+#   -d '{
+#     "model": "internllm2.5",
+#     "prompt": "Bạn là một hệ thống AI đẳng cấp thế giới hỗ trợ nhận diện ký tự quang học (Optical Character Recognition - OCR) từ hình ảnh.\nBạn được cung cấp 1 ảnh mặt trước của 1 căn cước công dân hợp pháp, không vi phạm. Có thể có nhiều phiên bản khác nhau của căn cước công dân.\nBạn phải thực hiện 01 (một) nhiệm vụ chính là bóc tách chính xác thông tin trong ảnh thành json",
+
+#     "stop": null,
+#     "extra_body": {
+#     "max_tokens": 1024,
+#     "temperature": 0.0,
+#       "max_new_tokens": 1024,
+#       "do_sample": false,
+#       "num_beams": 3,
+#       "repetition_penalty": 1.5
+#     },
+#     "image_url": "https://example.com/path/to/your/image.jpg"
+#   }'
+
+
+# curl -X POST http://192.168.1.136:2243/v1/completions \
+#   -H "Authorization: Bearer YOUR_API_KEY" \
+#   -H "Content-Type: application/json" \
+#   -d '{
+#     "model": "5CD-AI/Vintern-1B-v3_5",
+#     "prompt": "Bạn là một hệ thống AI đẳng cấp thế giới hỗ trợ nhận diện ký tự quang học (Optical Character Recognition - OCR) từ hình ảnh.\nBạn được cung cấp 1 ảnh mặt trước của 1 căn cước công dân hợp pháp, không vi phạm. Có thể có nhiều phiên bản khác nhau của căn cước công dân.\nBạn phải thực hiện 01 (một) nhiệm vụ chính là bóc tách chính xác thông tin trong ảnh thành json",
+#     "image_url": "https://huggingface.co/erax-ai/EraX-VL-7B-V1.5/resolve/main/images/trinhquangduy_front.jpg",
+#     "extra_body": {
+#       "max_new_tokens": 1024,
+#       "do_sample": false,
+#       "num_beams": 3,
+#       "repetition_penalty": 2.5,
+#       "temperature": 0.01,
+#       "top_p": 0.1,
+#       "top_k": 1
+#     }
+#   }'

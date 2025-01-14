@@ -1,17 +1,22 @@
 #!/bin/bash
+MODEL_NAME="vintern-1b-v3_5"
+CONTAINER_NAME="aphrodite_${MODEL_NAME//[^a-zA-Z0-9_.-]/_}"
+
 docker run --runtime nvidia --gpus all -d \
+    --name ${CONTAINER_NAME} \
     -v ~/.cache/huggingface:/root/.cache/huggingface \
-    --env "CUDA_VISIBLE_DEVICES=2,3" \
+    --env "CUDA_VISIBLE_DEVICES=0,1" \
     --env "APHRODITE_IMAGE_FETCH_TIMEOUT=60" \
-    -p 2242:2242 \
+    -p 2244:2242 \
     --ipc=host \
     my-aphrodite-openai:cuda12.1 \
-    --model erax-ai/EraX-VL-7B-V1.5 \
-    --dtype half \
-    --rope-scaling "{\"type\":\"linear\",\"factor\":1.0,\"mrope_section\":[16,24,24],\"rope_type\":\"default\"}" \
-    --gpu-memory-utilization 0.8 \
+    --model 5CD-AI/Vintern-1B-v3_5 \
+    --dtype float16 \
+    --gpu-memory-utilization 0.4 \
     --tensor-parallel-size 2 \
     --disable-frontend-multiprocessing
+
+
     # --enforce-eager \
     # --enable-chunked-prefill \
 # #!/bin/bash
