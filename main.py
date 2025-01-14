@@ -363,7 +363,7 @@ def draw_boxes(image_path, boxes):
     return output_path
 
 # Update main code
-img_path = Path("14_01_2025_57d81fd7.png")
+img_path = Path("test.jpg")
 
 # Initialize detector with CUDA
 text_det = TextDetector(

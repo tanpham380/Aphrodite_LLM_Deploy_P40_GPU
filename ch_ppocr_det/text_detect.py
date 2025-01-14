@@ -26,11 +26,12 @@ from .infer_engine import OrtInferSession
 from .utils import DBPostProcess, DetPreProcess
 
 DEFAULT_CONFIG = {
-    "model_path": None,  # Add model_path to default config
+    "model_path": None,
     "intra_op_num_threads": 4,
     "inter_op_num_threads": 4,
-    "use_cuda": False,
+    "use_cuda": False,  # Enable CUDA by default
     "use_dml": False,
+    "gpu_id": 0,      # Default GPU device
     "limit_side_len": 736,
     "limit_type": "min",
     "thresh": 0.3,
@@ -66,6 +67,18 @@ class TextDetector:
             "use_dilation": config.get("use_dilation", True),
             "score_mode": config.get("score_mode", "fast"),
         }
+        cuda_provider_opts = {
+            "device_id": config.get("gpu_id", 0),
+            "arena_extend_strategy": "kNextPowerOfTwo",
+            "cudnn_conv_algo_search": "EXHAUSTIVE",
+            "do_copy_in_default_stream": True,
+        }
+                # Update config with CUDA options
+        config.update({
+            "provider_options": cuda_provider_opts,
+            "use_cuda": True
+        })
+        
         self.postprocess_op = DBPostProcess(**post_process)
         
         # Initialize inference
