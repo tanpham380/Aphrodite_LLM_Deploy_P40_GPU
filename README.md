@@ -4,7 +4,8 @@
 ## Overview
 This project provides customized configurations and Docker setup for running modern Large Language Models (LLMs) on legacy NVIDIA Pascal GPUs like the Tesla P40. It uses a modified version of the Aphrodite Engine with CUDA 12.1 compatibility.
 
-**Ngôn ngữ**: [English](#overview) | [Tiếng Việt](#aphrodite-trien-khai-mo-hinh-llm-cho-gpu-pascal)
+**Switch Language:** [English](#english-version) | [Tiếng Việt](#phiên-việt)
+## <a name="english-version"></a>English Version
 
 ## Features
 - **Optimized for NVIDIA Pascal architecture GPUs**
@@ -92,6 +93,7 @@ This project adheres to the same license as the Aphrodite Engine. Refer to the l
 ---
 
 # Aphrodite Triển khai Mô hình LLM cho GPU Pascal
+## <a name="phiên-việt"></a>Phiên bản tiếng Việt
 
 ## Tổng quan
 Dự án này cung cấp cấu hình tùy chỉnh và thiết lập Docker để chạy các Mô hình Ngôn ngữ Lớn (LLMs) hiện đại trên các GPU NVIDIA Pascal cũ như Tesla P40. Nó sử dụng phiên bản đã chỉnh sửa của Aphrodite Engine tương thích với CUDA 12.1.
